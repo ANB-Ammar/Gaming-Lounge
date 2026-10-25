@@ -2,15 +2,35 @@ using Gaming_Lounge.Data;
 using Gaming_Lounge.Models;
 using Gaming_Lounge.Options;
 using Gaming_Lounge.Services;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+if (!int.TryParse(port, out var portNumber) || portNumber is < 1 or > 65535)
+{
+    throw new InvalidOperationException("The PORT environment variable must be a valid TCP port.");
+}
+
+builder.WebHost.UseUrls($"http://0.0.0.0:{portNumber}");
+
+if (builder.Environment.IsProduction() &&
+    string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")))
+{
+    throw new InvalidOperationException(
+        "Set the ConnectionStrings__DefaultConnection environment variable in production.");
+}
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' was not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDataProtection()
+    .SetApplicationName("NeonNexus")
+    .PersistKeysToDbContext<ApplicationDbContext>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
@@ -36,6 +56,13 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.Configure<LoungeOptions>(builder.Configuration.GetSection(LoungeOptions.SectionName));
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardLimit = 1;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddControllersWithViews();
@@ -52,6 +79,7 @@ else
     app.UseHsts();
 }
 
+app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();

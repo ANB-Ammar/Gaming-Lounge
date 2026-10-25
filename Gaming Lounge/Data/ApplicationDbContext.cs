@@ -1,12 +1,14 @@
 using Gaming_Lounge.Models;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gaming_Lounge.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : IdentityDbContext<ApplicationUser>(options)
+    : IdentityDbContext<ApplicationUser>(options), IDataProtectionKeyContext
 {
+    public DbSet<DataProtectionKey> DataProtectionKeys => Set<DataProtectionKey>();
     public DbSet<GamingCategory> GamingCategories => Set<GamingCategory>();
     public DbSet<GamingStation> GamingStations => Set<GamingStation>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
