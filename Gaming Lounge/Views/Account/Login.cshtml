@@ -1,0 +1,22 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Player Login";
+}
+
+<section class="auth-section">
+    <div class="container narrow-container">
+        <div class="auth-card">
+            <div class="auth-header"><span class="auth-icon"><i class="bi bi-fingerprint"></i></span><span class="eyebrow">Identity scan</span><h1>Welcome <span class="gradient-text">back</span></h1><p>Sign in to confirm reservations and manage your sessions.</p></div>
+            <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" class="neon-form">
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+                <div class="mb-3"><label asp-for="Email" class="form-label"></label><div class="input-icon"><i class="bi bi-envelope"></i><input asp-for="Email" class="form-control" placeholder="player@example.com" /></div><span asp-validation-for="Email" class="text-danger"></span></div>
+                <div class="mb-3"><label asp-for="Password" class="form-label"></label><div class="input-icon"><i class="bi bi-lock"></i><input asp-for="Password" class="form-control" placeholder="Your secure password" /></div><span asp-validation-for="Password" class="text-danger"></span></div>
+                <div class="form-check mb-4"><input asp-for="RememberMe" class="form-check-input" /><label asp-for="RememberMe" class="form-check-label"></label></div>
+                <button class="btn btn-neon btn-lg w-100" type="submit">Enter Nexus <i class="bi bi-box-arrow-in-right"></i></button>
+            </form>
+            <p class="auth-switch">New player? <a asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]">Create an account</a></p>
+        </div>
+    </div>
+</section>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

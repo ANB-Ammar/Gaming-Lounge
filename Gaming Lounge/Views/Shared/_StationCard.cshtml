@@ -1,0 +1,26 @@
+@model GamingStationCardViewModel
+<article class="station-card h-100 accent-@Model.CategoryAccent">
+    <div class="station-media">
+        <img src="@Model.ImagePath" alt="@Model.Name gaming setup" loading="lazy" />
+        <div class="station-category">@Model.CategoryName</div>
+        @if (Model.Status == StationStatus.Maintenance)
+        {
+            <span class="station-status maintenance"><i class="bi bi-tools"></i> Maintenance</span>
+        }
+        else
+        {
+            <span class="station-status available"><i class="bi bi-circle-fill"></i> Available</span>
+        }
+    </div>
+    <div class="station-body">
+        <h3>@Model.Name</h3>
+        <p>@Model.Description</p>
+        <div class="spec-line"><i class="bi bi-cpu"></i><span>@Model.Specifications</span></div>
+        <div class="station-footer">
+            <div class="station-price"><strong>@Model.HourlyRate.ToString("N0")</strong><span> EGP / hour</span></div>
+            <a class="btn btn-outline-neon" asp-area="" asp-controller="GamingStations" asp-action="Details" asp-route-slug="@Model.Slug">
+                View rig <i class="bi bi-arrow-up-right"></i>
+            </a>
+        </div>
+    </div>
+</article>

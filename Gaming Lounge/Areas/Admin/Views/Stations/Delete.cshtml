@@ -1,0 +1,33 @@
+@model GamingStation
+@{
+    ViewData["Title"] = "Delete Gaming Station";
+}
+
+<header class="admin-page-header">
+    <div>
+        <span class="admin-kicker"><i class="bi bi-exclamation-triangle"></i> Destructive action</span>
+        <h2>Delete gaming station</h2>
+        <p>Review this station carefully before removing it from the catalog.</p>
+    </div>
+</header>
+
+<section class="admin-danger-card">
+    <span class="admin-danger-icon"><i class="bi bi-trash3"></i></span>
+    <h2>Delete @Model.Name?</h2>
+    <p>
+        This station belongs to <strong>@Model.GamingCategory.Name</strong>. Deletion is only allowed when it has no
+        reservation history. If customers have booked it before, mark the station inactive instead.
+    </p>
+    <div class="admin-category-meta mb-4">
+        <span class="admin-chip">@Model.HourlyRate.ToString("N0") EGP/hour</span>
+        <span class="admin-status @Model.Status.ToString().ToLowerInvariant()">@Model.Status</span>
+    </div>
+    <form asp-action="Delete" method="post" class="d-flex flex-wrap gap-2">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <a class="btn btn-admin-secondary" asp-action="Index">Keep station</a>
+        <button class="btn btn-danger" type="submit"
+                data-confirm="Permanently delete @Model.Name? This action cannot be undone.">
+            <i class="bi bi-trash3 me-1"></i> Delete permanently
+        </button>
+    </form>
+</section>

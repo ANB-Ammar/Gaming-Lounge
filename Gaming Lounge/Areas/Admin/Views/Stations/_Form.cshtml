@@ -1,0 +1,109 @@
+@model AdminStationEditViewModel
+<div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+<input asp-for="Id" type="hidden" />
+<input asp-for="RowVersion" type="hidden" />
+@if (Model.Id > 0)
+{
+    <input asp-for="Slug" type="hidden" />
+}
+
+<section class="admin-form-section">
+    <header class="admin-form-section-header">
+        <h3>Station identity</h3>
+        <p>Customer-facing name, generated URL, category, pricing, and description.</p>
+    </header>
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <label asp-for="Name" class="form-label"></label>
+            @if (Model.Id == 0)
+            {
+                <input asp-for="Name" class="form-control" placeholder="e.g. RTX Overdrive 03"
+                       data-slug-source data-slug-target="#stationSlugPreview" />
+            }
+            else
+            {
+                <input asp-for="Name" class="form-control" placeholder="e.g. RTX Overdrive 03" />
+            }
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="col-lg-4">
+            <label asp-for="HourlyRate" class="form-label"></label>
+            <div class="input-group">
+                <input asp-for="HourlyRate" class="form-control" />
+                <span class="input-group-text">EGP</span>
+            </div>
+            <span asp-validation-for="HourlyRate" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">URL slug</label>
+            <div class="admin-slug-preview">
+                <i class="bi bi-link-45deg"></i>
+                <code id="stationSlugPreview" data-slug-fallback="station">@(string.IsNullOrWhiteSpace(Model.Slug) ? "station" : Model.Slug)</code>
+            </div>
+            <small class="admin-field-help">
+                @(Model.Id == 0
+                    ? "Generated automatically from the name. A number is added if the slug already exists."
+                    : "Existing public URLs stay unchanged when the station name is edited.")
+            </small>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="GamingCategoryId" class="form-label"></label>
+            <select asp-for="GamingCategoryId" asp-items="Model.Categories" class="form-select">
+                <option value="">Select a category</option>
+            </select>
+            <span asp-validation-for="GamingCategoryId" class="text-danger"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" rows="4" class="form-control"
+                      placeholder="Describe the customer experience and best use cases."></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+    </div>
+</section>
+
+<section class="admin-form-section">
+    <header class="admin-form-section-header">
+        <h3>Hardware and media</h3>
+        <p>Technical details and the image shown throughout the public catalog.</p>
+    </header>
+    <div class="row g-3">
+        <div class="col-12">
+            <label asp-for="Specifications" class="form-label"></label>
+            <textarea asp-for="Specifications" rows="4" class="form-control"
+                      placeholder="GPU, processor, memory, display, controllers, and other hardware."></textarea>
+            <span asp-validation-for="Specifications" class="text-danger"></span>
+        </div>
+        <div class="col-lg-8">
+            <label asp-for="ImagePath" class="form-label"></label>
+            <input asp-for="ImagePath" class="form-control" data-image-preview-input="#stationImagePreview" />
+            <span asp-validation-for="ImagePath" class="text-danger"></span>
+            <small class="admin-field-help">Use an existing local image path such as /images/stations/pc-arena.svg.</small>
+        </div>
+        <div class="col-lg-4">
+            <label class="form-label">Image preview</label>
+            <div class="admin-image-preview">
+                <img id="stationImagePreview" src="@Model.ImagePath" alt="Station image preview" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="admin-form-section">
+    <header class="admin-form-section-header">
+        <h3>Availability and promotion</h3>
+        <p>Control whether customers can reserve this station and where it is promoted.</p>
+    </header>
+    <div class="row g-3 align-items-end">
+        <div class="col-md-6">
+            <label asp-for="Status" class="form-label"></label>
+            <select asp-for="Status" asp-items="Html.GetEnumSelectList<StationStatus>()" class="form-select"></select>
+        </div>
+        <div class="col-md-6">
+            <div class="form-check form-switch mb-2">
+                <input asp-for="IsFeatured" class="form-check-input" />
+                <label asp-for="IsFeatured" class="form-check-label">Feature this station on the homepage</label>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,145 @@
+@model AdminReservationsIndexViewModel
+@{
+    ViewData["Title"] = "Reservations";
+    var hasFilters = !string.IsNullOrWhiteSpace(Model.SearchTerm) || Model.Status.HasValue || Model.Date.HasValue;
+    var startItem = Model.TotalCount == 0 ? 0 : ((Model.Page - 1) * Model.PageSize) + 1;
+    var endItem = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
+}
+
+<header class="admin-page-header">
+    <div>
+        <span class="admin-kicker"><i class="bi bi-calendar2-check"></i> Booking operations</span>
+        <h2>Reservation management</h2>
+        <p>Review customer sessions, schedules, payments, and reservation status from one workspace.</p>
+    </div>
+    <span class="admin-chip">@Model.TotalCount matching reservations</span>
+</header>
+
+<form method="get" class="admin-filter-bar">
+    <div class="admin-search">
+        <i class="bi bi-search"></i>
+        <input asp-for="SearchTerm" class="form-control" placeholder="Customer, email, or station" />
+    </div>
+    <div>
+        <label asp-for="Status" class="form-label">Status</label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<ReservationStatus>()" class="form-select">
+            <option value="">All statuses</option>
+        </select>
+    </div>
+    <div>
+        <label asp-for="Date" class="form-label">Reservation date</label>
+        <input asp-for="Date" class="form-control" type="date" />
+    </div>
+    <button class="btn btn-admin-primary" type="submit"><i class="bi bi-funnel me-1"></i> Filter</button>
+    @if (hasFilters)
+    {
+        <a class="btn btn-admin-secondary" asp-action="Index">Clear</a>
+    }
+</form>
+
+<div class="admin-table-wrap">
+    <div class="table-responsive">
+        <table class="table admin-table align-middle">
+            <thead>
+                <tr>
+                    <th>Booking</th>
+                    <th>Customer</th>
+                    <th>Gaming station</th>
+                    <th>Date and time</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Manage</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Reservations.Count == 0)
+                {
+                    <tr>
+                        <td class="admin-table-empty" colspan="7">
+                            <i class="bi bi-calendar2-x"></i>
+                            <strong>No reservations match these filters</strong>
+                            <small>Change or clear the filters to review other sessions.</small>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in Model.Reservations)
+                    {
+                        <tr>
+                            <td>
+                                <strong>#@item.Id.ToString("D5")</strong>
+                                <small>Created @item.CreatedAtUtc.ToLocalTime().ToString("MMM d, yyyy")</small>
+                            </td>
+                            <td>
+                                <strong>@item.CustomerName</strong>
+                                <small>@item.CustomerEmail</small>
+                            </td>
+                            <td><strong>@item.StationName</strong></td>
+                            <td>
+                                <strong>@item.ReservationDate.ToString("MMM d, yyyy")</strong>
+                                <small>@item.StartTime.ToString("h:mm tt") - @item.EndTime.ToString("h:mm tt")</small>
+                            </td>
+                            <td><strong>@item.TotalPrice.ToString("N0") EGP</strong></td>
+                            <td>
+                                <span class="admin-status @item.Status.ToString().ToLowerInvariant()">@item.Status</span>
+                            </td>
+                            <td>
+                                <form asp-action="UpdateStatus" method="post" class="d-flex align-items-center gap-2">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="hidden" name="filterStatus" value="@Model.Status" />
+                                    <input type="hidden" name="searchTerm" value="@Model.SearchTerm" />
+                                    <input type="hidden" name="date" value="@Model.Date?.ToString("yyyy-MM-dd")" />
+                                    <input type="hidden" name="page" value="@Model.Page" />
+                                    <select name="status" class="form-select form-select-sm" aria-label="Status for reservation @item.Id">
+                                        @foreach (var status in Enum.GetValues<ReservationStatus>())
+                                        {
+                                            <option value="@status" selected="@(status == item.Status)">@status</option>
+                                        }
+                                    </select>
+                                    <button class="btn btn-admin-secondary btn-sm" type="submit"
+                                            data-confirm="Update reservation #@item.Id.ToString("D5") to the selected status?">
+                                        Save
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="admin-pagination" aria-label="Reservation pages">
+        <span>Showing @startItem-@endItem of @Model.TotalCount reservations</span>
+        <ul class="pagination pagination-sm">
+            <li class="page-item @(Model.Page == 1 ? "disabled" : null)">
+                <a class="page-link"
+                   asp-route-status="@Model.Status"
+                   asp-route-searchTerm="@Model.SearchTerm"
+                   asp-route-date="@Model.Date?.ToString("yyyy-MM-dd")"
+                   asp-route-page="@(Model.Page - 1)" aria-label="Previous">&lsaquo;</a>
+            </li>
+            @for (var pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++)
+            {
+                <li class="page-item @(pageNumber == Model.Page ? "active" : null)">
+                    <a class="page-link"
+                       asp-route-status="@Model.Status"
+                       asp-route-searchTerm="@Model.SearchTerm"
+                       asp-route-date="@Model.Date?.ToString("yyyy-MM-dd")"
+                       asp-route-page="@pageNumber">@pageNumber</a>
+                </li>
+            }
+            <li class="page-item @(Model.Page == Model.TotalPages ? "disabled" : null)">
+                <a class="page-link"
+                   asp-route-status="@Model.Status"
+                   asp-route-searchTerm="@Model.SearchTerm"
+                   asp-route-date="@Model.Date?.ToString("yyyy-MM-dd")"
+                   asp-route-page="@(Model.Page + 1)" aria-label="Next">&rsaquo;</a>
+            </li>
+        </ul>
+    </nav>
+}

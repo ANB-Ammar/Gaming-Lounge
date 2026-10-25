@@ -1,0 +1,97 @@
+@model AdminCustomersIndexViewModel
+@{
+    ViewData["Title"] = "Customers";
+    var startItem = Model.TotalCount == 0 ? 0 : ((Model.Page - 1) * Model.PageSize) + 1;
+    var endItem = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
+}
+
+<header class="admin-page-header">
+    <div>
+        <span class="admin-kicker"><i class="bi bi-people"></i> Player directory</span>
+        <h2>Registered customers</h2>
+        <p>Review customer accounts and their booking activity without exposing sensitive credentials.</p>
+    </div>
+    <span class="admin-chip">@Model.TotalCount customer accounts</span>
+</header>
+
+<form method="get" class="admin-filter-bar" style="grid-template-columns: minmax(240px, 1fr) auto auto;">
+    <div class="admin-search">
+        <i class="bi bi-search"></i>
+        <input asp-for="SearchTerm" class="form-control" placeholder="Search name or email address" />
+    </div>
+    <button class="btn btn-admin-primary" type="submit"><i class="bi bi-search me-1"></i> Search</button>
+    @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+    {
+        <a class="btn btn-admin-secondary" asp-action="Index">Clear</a>
+    }
+</form>
+
+<div class="admin-table-wrap">
+    <div class="table-responsive">
+        <table class="table admin-table align-middle">
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>Email</th>
+                    <th>Joined</th>
+                    <th>Reservations</th>
+                    <th>Account type</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Customers.Count == 0)
+                {
+                    <tr>
+                        <td class="admin-table-empty" colspan="5">
+                            <i class="bi bi-people"></i>
+                            <strong>No customer accounts found</strong>
+                            <small>Try a different search term.</small>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var customer in Model.Customers)
+                    {
+                        <tr>
+                            <td>
+                                <div class="admin-customer-cell">
+                                    <span class="admin-customer-avatar">@customer.DisplayName.Substring(0, 1).ToUpperInvariant()</span>
+                                    <strong>@customer.DisplayName</strong>
+                                </div>
+                            </td>
+                            <td>@customer.Email</td>
+                            <td>
+                                <strong>@customer.CreatedAtUtc.ToLocalTime().ToString("MMM d, yyyy")</strong>
+                                <small>@customer.CreatedAtUtc.ToLocalTime().ToString("h:mm tt")</small>
+                            </td>
+                            <td><span class="admin-chip">@customer.ReservationCount bookings</span></td>
+                            <td><span class="admin-status active">Customer</span></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="admin-pagination" aria-label="Customer pages">
+        <span>Showing @startItem-@endItem of @Model.TotalCount customers</span>
+        <ul class="pagination pagination-sm">
+            <li class="page-item @(Model.Page == 1 ? "disabled" : null)">
+                <a class="page-link" asp-route-searchTerm="@Model.SearchTerm" asp-route-page="@(Model.Page - 1)" aria-label="Previous">&lsaquo;</a>
+            </li>
+            @for (var pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++)
+            {
+                <li class="page-item @(pageNumber == Model.Page ? "active" : null)">
+                    <a class="page-link" asp-route-searchTerm="@Model.SearchTerm" asp-route-page="@pageNumber">@pageNumber</a>
+                </li>
+            }
+            <li class="page-item @(Model.Page == Model.TotalPages ? "disabled" : null)">
+                <a class="page-link" asp-route-searchTerm="@Model.SearchTerm" asp-route-page="@(Model.Page + 1)" aria-label="Next">&rsaquo;</a>
+            </li>
+        </ul>
+    </nav>
+}

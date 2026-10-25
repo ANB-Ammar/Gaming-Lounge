@@ -1,0 +1,55 @@
+@model GamingStationDetailsViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<section class="detail-hero accent-@Model.CategoryAccent">
+    <div class="container">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+            <a asp-action="Index">Stations</a><i class="bi bi-chevron-right"></i><span>@Model.Name</span>
+        </nav>
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-7">
+                <div class="detail-image-frame">
+                    <img src="@Model.ImagePath" alt="@Model.Name gaming station" />
+                    <span class="scan-line"></span>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <span class="eyebrow">@Model.CategoryName</span>
+                <h1>@Model.Name</h1>
+                <div class="detail-status @(Model.Status == StationStatus.Available ? "available" : "maintenance")">
+                    <i class="bi @(Model.Status == StationStatus.Available ? "bi-circle-fill" : "bi-tools")"></i> @Model.Status
+                </div>
+                <p class="detail-description">@Model.Description</p>
+                <div class="spec-panel">
+                    <span>System specifications</span>
+                    <p><i class="bi bi-cpu"></i> @Model.Specifications</p>
+                </div>
+                <div class="detail-booking-bar">
+                    <div><span>Hourly rate</span><strong>@Model.HourlyRate.ToString("N0") EGP</strong></div>
+                    @if (Model.Status == StationStatus.Available)
+                    {
+                        <a class="btn btn-neon btn-lg" asp-controller="Reservations" asp-action="Create" asp-route-stationId="@Model.Id">
+                            Check times <i class="bi bi-calendar2-check"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary btn-lg" disabled>Temporarily offline</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-space pt-5">
+    <div class="container">
+        <div class="info-strip">
+            <div><i class="bi bi-clock-history"></i><span><strong>Flexible sessions</strong>Book from 1 to 6 hours</span></div>
+            <div><i class="bi bi-shield-check"></i><span><strong>Clean setup</strong>Sanitized before every booking</span></div>
+            <div><i class="bi bi-headset"></i><span><strong>Staff support</strong>Help available throughout your session</span></div>
+        </div>
+    </div>
+</section>

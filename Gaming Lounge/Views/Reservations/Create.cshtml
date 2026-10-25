@@ -1,0 +1,77 @@
+@model ReservationCreateViewModel
+@{
+    ViewData["Title"] = "Reserve " + Model.StationName;
+}
+
+<section class="page-hero compact-hero">
+    <div class="container">
+        <span class="eyebrow">Session configuration</span>
+        <h1>Lock in your <span class="gradient-text">play time</span></h1>
+        <p>Availability is checked live and verified again when you confirm.</p>
+    </div>
+</section>
+
+<section class="section-space pt-4">
+    <div class="container">
+        <div class="row g-4 g-lg-5">
+            <div class="col-lg-5">
+                <div class="booking-station-card">
+                    <img src="@Model.StationImagePath" alt="@Model.StationName" />
+                    <div class="p-4">
+                        <span class="eyebrow">@Model.CategoryName</span>
+                        <h2>@Model.StationName</h2>
+                        <div class="booking-rate"><strong>@Model.HourlyRate.ToString("N0")</strong> EGP / hour</div>
+                    </div>
+                </div>
+                <div class="secure-note"><i class="bi bi-shield-lock"></i><span>Your slot is rechecked inside a protected database transaction before it is saved.</span></div>
+            </div>
+            <div class="col-lg-7">
+                <form asp-action="Create" method="post" class="neon-form booking-form" id="reservationForm" data-hourly-rate="@Model.HourlyRate.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                    <input asp-for="GamingStationId" type="hidden" />
+                    <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+                    <div class="form-step"><span>01</span><div><strong>Select a date</strong><small>Bookings are open for the next 30 days.</small></div></div>
+                    <div class="mb-4">
+                        <label asp-for="ReservationDate" class="form-label"></label>
+                        <input asp-for="ReservationDate" class="form-control form-control-lg" min="@Model.EarliestDate.ToString("yyyy-MM-dd")" max="@Model.LatestDate.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="ReservationDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-step"><span>02</span><div><strong>Choose session length</strong><small>Longer sessions show only compatible start times.</small></div></div>
+                    <div class="duration-selector mb-4">
+                        @for (var duration = 1; duration <= 6; duration++)
+                        {
+                            <label class="duration-option">
+                                <input type="radio" asp-for="DurationHours" value="@duration" />
+                                <span>@duration<small>hr@(duration > 1 ? "s" : "")</small></span>
+                            </label>
+                        }
+                    </div>
+                    <span asp-validation-for="DurationHours" class="text-danger"></span>
+
+                    <div class="form-step"><span>03</span><div><strong>Pick an available time</strong><small>Times update automatically.</small></div></div>
+                    <div class="mb-4">
+                        <label asp-for="StartTime" class="form-label">Available start time</label>
+                        <select asp-for="StartTime" class="form-select form-select-lg" id="startTimeSelect">
+                            <option value="">Choose a date and duration</option>
+                        </select>
+                        <div class="form-text" id="availabilityMessage">Checking live availability...</div>
+                        <span asp-validation-for="StartTime" class="text-danger"></span>
+                    </div>
+
+                    <div class="booking-total">
+                        <div><span>Estimated total</span><small>No payment is collected online.</small></div>
+                        <strong><span id="totalPrice">@Model.HourlyRate.ToString("N0")</span> EGP</strong>
+                    </div>
+                    <button class="btn btn-neon btn-lg w-100" type="submit">
+                        <i class="bi bi-lock-fill"></i> @(User.Identity?.IsAuthenticated == true ? "Confirm reservation" : "Log in and confirm")
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/reservations.js" asp-append-version="true"></script>
+}

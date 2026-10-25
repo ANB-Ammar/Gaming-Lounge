@@ -1,0 +1,23 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Join Neon Nexus";
+}
+
+<section class="auth-section">
+    <div class="container narrow-container">
+        <div class="auth-card">
+            <div class="auth-header"><span class="auth-icon"><i class="bi bi-person-plus"></i></span><span class="eyebrow">Create player profile</span><h1>Join the <span class="gradient-text">Nexus</span></h1><p>Reserve stations, manage sessions, and build your gaming history.</p></div>
+            <form asp-action="Register" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" class="neon-form">
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+                <div class="mb-3"><label asp-for="DisplayName" class="form-label"></label><div class="input-icon"><i class="bi bi-person"></i><input asp-for="DisplayName" class="form-control" placeholder="Your player name" /></div><span asp-validation-for="DisplayName" class="text-danger"></span></div>
+                <div class="mb-3"><label asp-for="Email" class="form-label"></label><div class="input-icon"><i class="bi bi-envelope"></i><input asp-for="Email" class="form-control" placeholder="player@example.com" /></div><span asp-validation-for="Email" class="text-danger"></span></div>
+                <div class="mb-3"><label asp-for="Password" class="form-label"></label><div class="input-icon"><i class="bi bi-lock"></i><input asp-for="Password" class="form-control" placeholder="Minimum 8 characters" /></div><span asp-validation-for="Password" class="text-danger"></span></div>
+                <div class="mb-4"><label asp-for="ConfirmPassword" class="form-label"></label><div class="input-icon"><i class="bi bi-shield-lock"></i><input asp-for="ConfirmPassword" class="form-control" placeholder="Repeat your password" /></div><span asp-validation-for="ConfirmPassword" class="text-danger"></span></div>
+                <button class="btn btn-neon btn-lg w-100" type="submit">Create profile <i class="bi bi-arrow-right"></i></button>
+            </form>
+            <p class="auth-switch">Already registered? <a asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]">Log in</a></p>
+        </div>
+    </div>
+</section>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

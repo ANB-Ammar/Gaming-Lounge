@@ -1,0 +1,28 @@
+@model ReservationConfirmationViewModel
+@{
+    ViewData["Title"] = "Reservation Confirmed";
+}
+
+<section class="section-space confirmation-section">
+    <div class="container narrow-container">
+        <div class="confirmation-card">
+            <div class="confirmation-icon"><i class="bi bi-check2"></i></div>
+            <span class="eyebrow">Booking confirmed</span>
+            <h1>You're cleared to enter.</h1>
+            <p>Your station is reserved. Show this booking in your player profile when you arrive.</p>
+            <div class="confirmation-code">NEXUS-@Model.Id.ToString("D5")</div>
+            <dl class="confirmation-details">
+                <div><dt>Station</dt><dd>@Model.StationName</dd></div>
+                <div><dt>Zone</dt><dd>@Model.CategoryName</dd></div>
+                <div><dt>Date</dt><dd>@Model.ReservationDate.ToString("dddd, MMMM d, yyyy")</dd></div>
+                <div><dt>Time</dt><dd>@Model.StartTime.ToString("h:mm tt") – @Model.EndTime.ToString("h:mm tt")</dd></div>
+                <div><dt>Duration</dt><dd>@Model.DurationHours hour@(Model.DurationHours > 1 ? "s" : "")</dd></div>
+                <div><dt>Total</dt><dd class="text-neon">@Model.TotalPrice.ToString("N0") EGP</dd></div>
+            </dl>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a class="btn btn-neon" asp-action="Mine">View my sessions</a>
+                <a class="btn btn-ghost" asp-controller="GamingStations" asp-action="Index">Book another station</a>
+            </div>
+        </div>
+    </div>
+</section>

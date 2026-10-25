@@ -1,0 +1,40 @@
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+}
+
+<nav class="admin-sidebar-nav" aria-label="Admin navigation">
+    <span class="admin-nav-label">Workspace</span>
+    <a class="admin-nav-link @(controller == "Dashboard" ? "active" : null)"
+       asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+        <i class="bi bi-grid-1x2-fill"></i>
+        <span>Dashboard</span>
+    </a>
+
+    <span class="admin-nav-label">Management</span>
+    <a class="admin-nav-link @(controller == "Stations" ? "active" : null)"
+       asp-area="Admin" asp-controller="Stations" asp-action="Index">
+        <i class="bi bi-pc-display-horizontal"></i>
+        <span>Gaming Stations</span>
+    </a>
+    <a class="admin-nav-link @(controller == "Categories" ? "active" : null)"
+       asp-area="Admin" asp-controller="Categories" asp-action="Index">
+        <i class="bi bi-tags-fill"></i>
+        <span>Gaming Categories</span>
+    </a>
+    <a class="admin-nav-link @(controller == "Reservations" ? "active" : null)"
+       asp-area="Admin" asp-controller="Reservations" asp-action="Index">
+        <i class="bi bi-calendar2-check-fill"></i>
+        <span>Reservations</span>
+    </a>
+    <a class="admin-nav-link @(controller == "Customers" ? "active" : null)"
+       asp-area="Admin" asp-controller="Customers" asp-action="Index">
+        <i class="bi bi-people-fill"></i>
+        <span>Customers</span>
+    </a>
+
+    <span class="admin-nav-label">Public Experience</span>
+    <a class="admin-nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+        <i class="bi bi-box-arrow-up-right"></i>
+        <span>View Customer Site</span>
+    </a>
+</nav>

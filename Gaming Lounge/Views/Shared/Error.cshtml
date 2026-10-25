@@ -1,0 +1,5 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "System Error";
+}
+<section class="auth-section"><div class="container narrow-container"><div class="auth-card text-center"><div class="auth-icon danger"><i class="bi bi-exclamation-octagon"></i></div><span class="eyebrow">System interruption</span><h1>Something left the <span class="gradient-text">grid</span></h1><p class="text-secondary">The request could not be completed. Return to the homepage and try again.</p>@if (Model.ShowRequestId) { <p class="confirmation-code">Trace: @Model.RequestId</p> }<div><a class="btn btn-neon" asp-controller="Home" asp-action="Index">Return home</a></div></div></div></section>

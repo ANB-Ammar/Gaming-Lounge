@@ -1,0 +1,22 @@
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "Player Profile";
+}
+
+<section class="page-hero compact-hero"><div class="container"><span class="eyebrow">Account settings</span><h1>Player <span class="gradient-text">profile</span></h1><p>Keep your contact details and display name current.</p></div></section>
+<section class="section-space pt-4">
+    <div class="container narrow-container">
+        <div class="neon-form profile-card">
+            <div class="profile-avatar"><i class="bi bi-person"></i></div>
+            <form asp-action="Profile" method="post">
+                <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+                <div class="mb-3"><label asp-for="DisplayName" class="form-label"></label><input asp-for="DisplayName" class="form-control" /><span asp-validation-for="DisplayName" class="text-danger"></span></div>
+                <div class="mb-3"><label asp-for="Email" class="form-label"></label><input asp-for="Email" class="form-control" readonly /><div class="form-text">Email changes are disabled in this portfolio version.</div></div>
+                <div class="mb-4"><label asp-for="PhoneNumber" class="form-label"></label><input asp-for="PhoneNumber" class="form-control" placeholder="Optional" /><span asp-validation-for="PhoneNumber" class="text-danger"></span></div>
+                <button class="btn btn-neon" type="submit">Save profile</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

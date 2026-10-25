@@ -1,0 +1,58 @@
+@model IReadOnlyList<GamingCategory>
+@{
+    ViewData["Title"] = "Gaming Categories";
+}
+
+<header class="admin-page-header">
+    <div>
+        <span class="admin-kicker"><i class="bi bi-tags"></i> Catalog architecture</span>
+        <h2>Gaming categories</h2>
+        <p>Organize stations into clear customer-facing groups and control their public visibility.</p>
+    </div>
+    <a class="btn btn-admin-primary" asp-action="Create">
+        <i class="bi bi-plus-lg me-1"></i> Add category
+    </a>
+</header>
+
+<div class="admin-category-grid">
+    @foreach (var category in Model)
+    {
+        <article class="admin-category-card accent-@category.AccentColor">
+            <header class="admin-category-card-header">
+                <span class="admin-category-icon"><i class="bi @category.IconClass"></i></span>
+                <span class="admin-status @(category.IsActive ? "active" : "inactive")">
+                    @(category.IsActive ? "Visible" : "Hidden")
+                </span>
+            </header>
+
+            <div class="admin-category-content">
+                <h3>@category.Name</h3>
+                <p>@category.Description</p>
+            </div>
+
+            <dl class="admin-category-stats">
+                <div>
+                    <dt><i class="bi bi-pc-display-horizontal"></i> Stations</dt>
+                    <dd>@category.Stations.Count</dd>
+                </div>
+                <div>
+                    <dt><i class="bi bi-sort-numeric-down"></i> Display order</dt>
+                    <dd>@category.SortOrder</dd>
+                </div>
+            </dl>
+
+            <footer class="admin-category-actions">
+                <a class="btn btn-admin-secondary btn-sm" asp-action="Edit" asp-route-id="@category.Id">
+                    <i class="bi bi-pencil me-1"></i> Edit category
+                </a>
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" name="id" value="@category.Id" />
+                    <button class="btn btn-outline-danger btn-sm" type="submit"
+                            data-confirm="Delete @category.Name? Categories can only be deleted when they contain no stations.">
+                        <i class="bi bi-trash3 me-1"></i> Delete
+                    </button>
+                </form>
+            </footer>
+        </article>
+    }
+</div>

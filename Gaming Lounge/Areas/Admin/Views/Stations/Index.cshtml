@@ -1,0 +1,124 @@
+@model AdminStationsIndexViewModel
+@{
+    ViewData["Title"] = "Gaming Stations";
+    var hasFilters = !string.IsNullOrWhiteSpace(Model.SearchTerm) || Model.CategoryId.HasValue || Model.Status.HasValue;
+}
+
+<header class="admin-page-header">
+    <div>
+        <span class="admin-kicker"><i class="bi bi-cpu"></i> Hardware operations</span>
+        <h2>Gaming station fleet</h2>
+        <p>Manage pricing, visibility, categories, and maintenance status for every bookable station.</p>
+    </div>
+    <a class="btn btn-admin-primary" asp-action="Create">
+        <i class="bi bi-plus-lg me-1"></i> Add station
+    </a>
+</header>
+
+<form method="get" class="admin-filter-bar">
+    <div class="admin-search">
+        <i class="bi bi-search"></i>
+        <input asp-for="SearchTerm" class="form-control" placeholder="Search station name or slug" />
+    </div>
+    <div>
+        <label asp-for="CategoryId" class="form-label">Category</label>
+        <select asp-for="CategoryId" asp-items="Model.Categories" class="form-select">
+            <option value="">All categories</option>
+        </select>
+    </div>
+    <div>
+        <label asp-for="Status" class="form-label">Status</label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<StationStatus>()" class="form-select">
+            <option value="">All statuses</option>
+        </select>
+    </div>
+    <button class="btn btn-admin-primary" type="submit"><i class="bi bi-funnel me-1"></i> Filter</button>
+    @if (hasFilters)
+    {
+        <a class="btn btn-admin-secondary" asp-action="Index">Clear</a>
+    }
+</form>
+
+<div class="admin-table-wrap">
+    <div class="table-responsive">
+        <table class="table admin-table align-middle">
+            <thead>
+                <tr>
+                    <th>Station</th>
+                    <th>Category</th>
+                    <th>Hourly rate</th>
+                    <th>Status</th>
+                    <th>Bookings</th>
+                    <th>Visibility</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Stations.Count == 0)
+                {
+                    <tr>
+                        <td class="admin-table-empty" colspan="7">
+                            <i class="bi bi-pc-display-horizontal"></i>
+                            <strong>No stations match these filters</strong>
+                            <small>Clear the filters or add a new gaming station.</small>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var station in Model.Stations)
+                    {
+                        <tr>
+                            <td>
+                                <div class="admin-station-cell">
+                                    <img class="admin-station-image" src="@station.ImagePath" alt="" />
+                                    <div>
+                                        <strong>@station.Name</strong>
+                                        <small>/@station.Slug</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="admin-chip">@station.CategoryName</span></td>
+                            <td>
+                                <strong>@station.HourlyRate.ToString("N0") EGP</strong>
+                                <small>per hour</small>
+                            </td>
+                            <td>
+                                <span class="admin-status @station.Status.ToString().ToLowerInvariant()">@station.Status</span>
+                            </td>
+                            <td><span class="admin-chip">@station.ReservationCount total</span></td>
+                            <td>
+                                @if (station.IsFeatured)
+                                {
+                                    <span class="admin-featured"><i class="bi bi-star-fill me-1"></i> Featured</span>
+                                }
+                                else
+                                {
+                                    <span class="text-secondary">Standard</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="admin-table-actions">
+                                    <a class="btn btn-admin-icon" asp-action="Edit" asp-route-id="@station.Id" title="Edit station">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="ToggleMaintenance" method="post">
+                                        <input type="hidden" name="id" value="@station.Id" />
+                                        <button class="btn btn-admin-icon" type="submit"
+                                                title="Toggle maintenance"
+                                                data-confirm="Change the maintenance status for @station.Name?">
+                                            <i class="bi bi-tools"></i>
+                                        </button>
+                                    </form>
+                                    <a class="btn btn-admin-icon danger" asp-action="Delete" asp-route-id="@station.Id" title="Delete station">
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

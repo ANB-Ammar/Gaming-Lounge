@@ -1,0 +1,137 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Premium Gaming Lounge";
+}
+
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5 min-vh-hero">
+            <div class="col-lg-7">
+                <span class="eyebrow reveal"><i class="bi bi-stars"></i> Cairo's next-level gaming destination</span>
+                <h1 class="hero-title reveal delay-1">ENTER THE<br /><span class="gradient-text">NEXT LEVEL.</span></h1>
+                <p class="hero-copy reveal delay-2">Elite hardware, immersive worlds, and zero-compromise sessions. Choose your station, lock your time, and own the arena.</p>
+                <div class="hero-actions reveal delay-3">
+                    <a class="btn btn-neon btn-lg" asp-controller="GamingStations" asp-action="Index"><i class="bi bi-lightning-charge-fill"></i> Book your station</a>
+                    <a class="btn btn-ghost btn-lg" href="#featured"><i class="bi bi-play-circle"></i> Explore the lounge</a>
+                </div>
+                <div class="hero-stats reveal delay-4">
+                    <div><strong>@Model.ActiveStationCount+</strong><span>Battle stations</span></div>
+                    <div><strong>@Model.CategoryCount</strong><span>Gaming zones</span></div>
+                    <div><strong>360Hz</strong><span>Peak refresh</span></div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="hero-console reveal delay-2">
+                    <div class="console-topline"><span>LIVE SYSTEM</span><span class="status-online"><i class="bi bi-circle-fill"></i> ONLINE</span></div>
+                    <div class="console-visual">
+                        <div class="orbital-ring ring-one"></div>
+                        <div class="orbital-ring ring-two"></div>
+                        <div class="core-icon"><i class="bi bi-controller"></i></div>
+                    </div>
+                    <div class="console-readout">
+                        <div><span>GPU LOAD</span><strong>98%</strong></div>
+                        <div class="signal-bars"><i></i><i></i><i></i><i></i><i></i></div>
+                        <div><span>LATENCY</span><strong>4 MS</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-grid"></div>
+</section>
+
+<section class="section-space" id="featured">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">Featured loadouts</span>
+                <h2>Choose your <span class="gradient-text">battle station</span></h2>
+            </div>
+            <a class="section-link" asp-controller="GamingStations" asp-action="Index">View all stations <i class="bi bi-arrow-right"></i></a>
+        </div>
+        <div class="row g-4">
+            @foreach (var station in Model.FeaturedStations)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <partial name="_StationCard" model="station" />
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section-space category-section">
+    <div class="container">
+        <div class="text-center section-heading-centered">
+            <span class="eyebrow">Three ways to play</span>
+            <h2>Find your <span class="gradient-text">dimension</span></h2>
+            <p>From esports precision to total immersion, every zone is built around the way you want to play.</p>
+        </div>
+        <div class="row g-4">
+            @foreach (var category in Model.Categories)
+            {
+                <div class="col-lg-4">
+                    <a class="category-card accent-@category.AccentColor" asp-controller="GamingStations" asp-action="Index" asp-route-categoryId="@category.Id">
+                        <span class="category-icon"><i class="bi @category.IconClass"></i></span>
+                        <div>
+                            <h3>@category.Name</h3>
+                            <p>@category.Description</p>
+                            <span class="category-count">@category.StationCount stations <i class="bi bi-arrow-right"></i></span>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section-space">
+    <div class="container">
+        <div class="experience-panel">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-5">
+                    <span class="eyebrow">The Nexus advantage</span>
+                    <h2>Built for players who <span class="gradient-text">notice everything.</span></h2>
+                    <p class="lead text-secondary">Every detail is tuned for focus, comfort, and performance—from the network to the chair.</p>
+                    <a class="btn btn-neon" asp-controller="GamingStations" asp-action="Index">See the hardware</a>
+                </div>
+                <div class="col-lg-7">
+                    <div class="feature-grid">
+                        <div class="feature-tile"><i class="bi bi-speedometer2"></i><h3>Low latency</h3><p>Fiber connectivity and optimized local networking.</p></div>
+                        <div class="feature-tile"><i class="bi bi-gpu-card"></i><h3>Elite hardware</h3><p>Current-generation GPUs, displays, and peripherals.</p></div>
+                        <div class="feature-tile"><i class="bi bi-shield-check"></i><h3>Clean & secure</h3><p>Reset profiles and sanitized equipment every session.</p></div>
+                        <div class="feature-tile"><i class="bi bi-cup-straw"></i><h3>Stay fueled</h3><p>Drinks and snacks delivered without leaving your game.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-space booking-steps">
+    <div class="container">
+        <div class="text-center section-heading-centered">
+            <span class="eyebrow">Ready in minutes</span>
+            <h2>Your session in <span class="gradient-text">three moves</span></h2>
+        </div>
+        <div class="steps-row">
+            <div class="step-card"><span>01</span><i class="bi bi-grid-1x2"></i><h3>Pick a station</h3><p>Compare categories, hardware, and hourly pricing.</p></div>
+            <div class="step-connector"><i class="bi bi-chevron-right"></i></div>
+            <div class="step-card"><span>02</span><i class="bi bi-calendar3"></i><h3>Choose your time</h3><p>See live availability and select your session length.</p></div>
+            <div class="step-connector"><i class="bi bi-chevron-right"></i></div>
+            <div class="step-card"><span>03</span><i class="bi bi-check2-circle"></i><h3>Enter the Nexus</h3><p>Confirm your booking and arrive ready to play.</p></div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-panel">
+            <div>
+                <span class="eyebrow">Your squad is waiting</span>
+                <h2>Ready to queue your next adventure?</h2>
+            </div>
+            <a class="btn btn-neon btn-lg" asp-controller="GamingStations" asp-action="Index">Reserve now <i class="bi bi-arrow-right"></i></a>
+        </div>
+    </div>
+</section>

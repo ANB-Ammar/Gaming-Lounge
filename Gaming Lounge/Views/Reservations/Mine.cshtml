@@ -1,0 +1,55 @@
+@model ReservationHistoryViewModel
+@{
+    ViewData["Title"] = "My Sessions";
+}
+
+<section class="page-hero compact-hero">
+    <div class="container">
+        <span class="eyebrow">Player command center</span>
+        <h1>My <span class="gradient-text">sessions</span></h1>
+        <p>Track upcoming bookings and review your gaming history.</p>
+    </div>
+</section>
+
+<section class="section-space pt-4">
+    <div class="container">
+        <div class="section-heading"><h2>Upcoming missions</h2><a class="btn btn-neon btn-sm" asp-controller="GamingStations" asp-action="Index"><i class="bi bi-plus-lg"></i> New booking</a></div>
+        @if (Model.Upcoming.Count == 0)
+        {
+            <div class="empty-state compact"><i class="bi bi-calendar2-plus"></i><h3>No upcoming sessions</h3><p>Your next adventure is one booking away.</p></div>
+        }
+        else
+        {
+            <div class="reservation-list">
+                @foreach (var item in Model.Upcoming)
+                {
+                    <article class="reservation-card">
+                        <img src="@item.StationImagePath" alt="@item.StationName" />
+                        <div class="reservation-main"><span class="eyebrow">@item.CategoryName</span><h3>@item.StationName</h3><div class="reservation-meta"><span><i class="bi bi-calendar3"></i>@item.ReservationDate.ToString("ddd, MMM d")</span><span><i class="bi bi-clock"></i>@item.StartTime.ToString("h:mm tt") – @item.EndTime.ToString("h:mm tt")</span><span><i class="bi bi-hourglass-split"></i>@item.DurationHours hr</span></div></div>
+                        <div class="reservation-actions"><strong>@item.TotalPrice.ToString("N0") EGP</strong>@if (item.CanCancel) { <form asp-action="Cancel" method="post"><input type="hidden" name="id" value="@item.Id" /><button class="btn btn-sm btn-outline-danger" type="submit" data-confirm="Cancel this reservation?">Cancel</button></form> }</div>
+                    </article>
+                }
+            </div>
+        }
+
+        <div class="section-heading mt-5"><h2>Session history</h2></div>
+        @if (Model.Previous.Count == 0)
+        {
+            <p class="text-secondary">No previous sessions yet.</p>
+        }
+        else
+        {
+            <div class="table-responsive neon-table-wrap">
+                <table class="table neon-table align-middle">
+                    <thead><tr><th>Station</th><th>Date</th><th>Time</th><th>Total</th><th>Status</th></tr></thead>
+                    <tbody>
+                    @foreach (var item in Model.Previous)
+                    {
+                        <tr><td><strong>@item.StationName</strong><small>@item.CategoryName</small></td><td>@item.ReservationDate.ToString("MMM d, yyyy")</td><td>@item.StartTime.ToString("h:mm tt")</td><td>@item.TotalPrice.ToString("N0") EGP</td><td><span class="status-badge status-@item.Status.ToString().ToLowerInvariant()">@item.Status</span></td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</section>

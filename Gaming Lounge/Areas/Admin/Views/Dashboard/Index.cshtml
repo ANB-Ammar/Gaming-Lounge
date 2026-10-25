@@ -1,0 +1,202 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Command Center";
+}
+
+<header class="admin-page-header">
+    <div>
+        <span class="admin-kicker"><i class="bi bi-broadcast-pin"></i> Live operations</span>
+        <h2>Lounge command center</h2>
+        <p>Real-time operational totals from the Neon Nexus reservation database.</p>
+    </div>
+    <a class="btn btn-admin-primary" asp-area="Admin" asp-controller="Stations" asp-action="Create">
+        <i class="bi bi-plus-lg me-1"></i> Add gaming station
+    </a>
+</header>
+
+<section class="admin-stat-grid" aria-label="Lounge statistics">
+    <article class="admin-stat-card cyan">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><i class="bi bi-pc-display-horizontal"></i></span>
+            <span class="admin-chip">Fleet</span>
+        </div>
+        <strong>@Model.TotalStations</strong>
+        <span>Total stations</span>
+        <small>@Model.AvailableStations currently available</small>
+    </article>
+    <article class="admin-stat-card green">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><i class="bi bi-check2-circle"></i></span>
+            <span class="admin-chip">Online</span>
+        </div>
+        <strong>@Model.AvailableStations</strong>
+        <span>Available stations</span>
+        <small>Ready for customer reservations</small>
+    </article>
+    <article class="admin-stat-card orange">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><i class="bi bi-tools"></i></span>
+            <span class="admin-chip">Service</span>
+        </div>
+        <strong>@Model.MaintenanceStations</strong>
+        <span>Under maintenance</span>
+        <small>Temporarily unavailable stations</small>
+    </article>
+    <article class="admin-stat-card purple">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><i class="bi bi-people"></i></span>
+            <span class="admin-chip">Players</span>
+        </div>
+        <strong>@Model.RegisteredCustomers</strong>
+        <span>Registered customers</span>
+        <small>Customer-role accounts only</small>
+    </article>
+    <article class="admin-stat-card pink">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><i class="bi bi-calendar-event"></i></span>
+            <span class="admin-chip">Today</span>
+        </div>
+        <strong>@Model.TodayReservations</strong>
+        <span>Today's reservations</span>
+        <small>All statuses scheduled today</small>
+    </article>
+    <article class="admin-stat-card cyan">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><i class="bi bi-fast-forward-circle"></i></span>
+            <span class="admin-chip">Pipeline</span>
+        </div>
+        <strong>@Model.UpcomingReservations</strong>
+        <span>Upcoming reservations</span>
+        <small>@Model.UpcomingRevenue.ToString("N0") EGP confirmed value</small>
+    </article>
+    <article class="admin-stat-card green">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><i class="bi bi-calendar2-check"></i></span>
+            <span class="admin-chip">Confirmed</span>
+        </div>
+        <strong>@Model.ConfirmedReservations</strong>
+        <span>Confirmed reservations</span>
+        <small>Across all reservation dates</small>
+    </article>
+    <article class="admin-stat-card pink">
+        <div class="admin-stat-top">
+            <span class="admin-stat-icon"><i class="bi bi-calendar2-x"></i></span>
+            <span class="admin-chip">Cancelled</span>
+        </div>
+        <strong>@Model.CancelledReservations</strong>
+        <span>Cancelled reservations</span>
+        <small>@Model.TotalReservations total reservation records</small>
+    </article>
+</section>
+
+<div class="row g-4">
+    <div class="col-xl-8">
+        <section class="admin-panel">
+            <header class="admin-panel-header">
+                <div>
+                    <span class="admin-kicker">Latest activity</span>
+                    <h3>Recent reservations</h3>
+                </div>
+                <a class="admin-panel-link" asp-area="Admin" asp-controller="Reservations" asp-action="Index">
+                    View all <i class="bi bi-arrow-right"></i>
+                </a>
+            </header>
+            <div class="table-responsive">
+                <table class="table admin-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Booking</th>
+                            <th>Customer</th>
+                            <th>Station</th>
+                            <th>Schedule</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.RecentReservations.Count == 0)
+                        {
+                            <tr>
+                                <td class="admin-table-empty" colspan="5">
+                                    <i class="bi bi-calendar2"></i>
+                                    <strong>No reservations yet</strong>
+                                    <small>New customer bookings will appear here.</small>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.RecentReservations)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>#@item.Id.ToString("D5")</strong>
+                                        <small>@item.TotalPrice.ToString("N0") EGP</small>
+                                    </td>
+                                    <td>
+                                        <strong>@item.CustomerName</strong>
+                                        <small>@item.CustomerEmail</small>
+                                    </td>
+                                    <td><strong>@item.StationName</strong></td>
+                                    <td>
+                                        <strong>@item.ReservationDate.ToString("MMM d, yyyy")</strong>
+                                        <small>@item.StartTime.ToString("h:mm tt") - @item.EndTime.ToString("h:mm tt")</small>
+                                    </td>
+                                    <td>
+                                        <span class="admin-status @item.Status.ToString().ToLowerInvariant()">@item.Status</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <div class="col-xl-4">
+        <section class="admin-panel mb-4">
+            <header class="admin-panel-header">
+                <div>
+                    <span class="admin-kicker">Distribution</span>
+                    <h3>Reservation health</h3>
+                </div>
+            </header>
+            <div class="admin-panel-body admin-status-overview">
+                @foreach (var status in Enum.GetValues<ReservationStatus>())
+                {
+                    var count = Model.StatusCounts.GetValueOrDefault(status);
+                    var percentage = Model.TotalReservations == 0 ? 0 : count * 100 / Model.TotalReservations;
+                    <div class="admin-status-row">
+                        <span class="admin-status @status.ToString().ToLowerInvariant()">@status</span>
+                        <div class="admin-progress" role="progressbar" aria-label="@status reservations" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">
+                            <span style="width: @percentage%"></span>
+                        </div>
+                        <strong>@count</strong>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <section class="admin-panel">
+            <header class="admin-panel-header">
+                <div>
+                    <span class="admin-kicker">Shortcuts</span>
+                    <h3>Quick actions</h3>
+                </div>
+            </header>
+            <div class="admin-panel-body admin-quick-actions">
+                <a class="admin-quick-action" asp-area="Admin" asp-controller="Stations" asp-action="Create">
+                    <i class="bi bi-plus-square"></i>
+                    <span><strong>Add station</strong><small>Deploy new gaming hardware</small></span>
+                </a>
+                <a class="admin-quick-action" asp-area="Admin" asp-controller="Reservations" asp-action="Index">
+                    <i class="bi bi-calendar-week"></i>
+                    <span><strong>Manage reservations</strong><small>Review customer sessions</small></span>
+                </a>
+                <a class="admin-quick-action" asp-area="Admin" asp-controller="Categories" asp-action="Index">
+                    <i class="bi bi-tags"></i>
+                    <span><strong>Organize categories</strong><small>Maintain the public catalog</small></span>
+                </a>
+            </div>
+        </section>
+    </div>
+</div>

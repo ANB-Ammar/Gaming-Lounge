@@ -1,0 +1,58 @@
+@model GamingStationsIndexViewModel
+@{
+    ViewData["Title"] = "Gaming Stations";
+}
+
+<section class="page-hero compact-hero">
+    <div class="container">
+        <span class="eyebrow">Select your loadout</span>
+        <h1>Gaming <span class="gradient-text">stations</span></h1>
+        <p>Explore high-performance PCs, private console booths, and immersive VR pods.</p>
+    </div>
+</section>
+
+<section class="section-space pt-4">
+    <div class="container">
+        <div class="catalog-toolbar">
+            <div class="filter-pills">
+                <a class="filter-pill @(Model.CategoryId is null ? "active" : null)" asp-action="Index">All systems</a>
+                @foreach (var category in Model.Categories)
+                {
+                    <a class="filter-pill @(Model.CategoryId == category.Id ? "active" : null)"
+                       asp-action="Index" asp-route-categoryId="@category.Id" asp-route-searchTerm="@Model.SearchTerm">
+                        <i class="bi @category.IconClass"></i> @category.Name
+                    </a>
+                }
+            </div>
+            <form class="catalog-search" asp-action="Index" method="get">
+                @if (Model.CategoryId.HasValue)
+                {
+                    <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+                }
+                <i class="bi bi-search"></i>
+                <input type="search" name="searchTerm" value="@Model.SearchTerm" placeholder="Search hardware or station..." aria-label="Search stations" />
+            </form>
+        </div>
+
+        @if (Model.Stations.Count == 0)
+        {
+            <div class="empty-state">
+                <i class="bi bi-radar"></i>
+                <h2>No stations detected</h2>
+                <p>Try a different category or search phrase.</p>
+                <a class="btn btn-neon" asp-action="Index">Reset filters</a>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+                @foreach (var station in Model.Stations)
+                {
+                    <div class="col-xl-4 col-md-6">
+                        <partial name="_StationCard" model="station" />
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>
